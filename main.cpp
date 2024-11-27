@@ -147,3 +147,53 @@ int verificarVitoria(int** tabuleiro) {
         if (soma == -3)
             return -1; // Jogador 2 venceu
     }
+// Verificar a diagonal principal (de cima à esquerda para baixo à direita)
+    soma = 0;
+    for (linha = 0; linha < 3; linha++)
+        soma += tabuleiro[linha][linha];
+    if (soma == 3)
+        return 1;  // Jogador 1 venceu
+    if (soma == -3)
+        return -1; // Jogador 2 venceu
+
+    // Verificar a diagonal secundária (de cima à direita para baixo à esquerda)
+    soma = tabuleiro[0][2] + tabuleiro[1][1] + tabuleiro[2][0];
+    if (soma == 3)
+        return 1;  // Jogador 1 venceu
+    if (soma == -3)
+        return -1; // Jogador 2 venceu
+
+    return 0;  // Nenhum vencedor
+}
+
+// Função para jogar uma partida inteira
+int jogarPartida(int** tabuleiro, bool doisJogadores) {
+    int turno = 0, continuar, vitoria;
+    inicializar(tabuleiro);  // Garante que o tabuleiro começa vazio
+
+    do {
+        exibir(tabuleiro);  // Exibe o estado atual do tabuleiro
+        cout << "Jogador " << 1 + turno % 2 << endl;  // Indica de quem é a vez de jogar
+
+        if (doisJogadores || turno % 2 == 0) {  // Se for dois jogadores ou turno do Jogador 1
+            jogarJogada(tabuleiro, turno % 2);
+        } else {
+            jogarJogada(tabuleiro, turno % 2, true);  // Se for o turno do computador, faz jogada aleatória
+        }
+
+        turno++;  // Avança para o próximo turno
+        continuar = verificarContinuar(tabuleiro);  // Verifica se ainda há casas vazias
+        vitoria = verificarVitoria(tabuleiro);  // Verifica se alguém venceu
+    } while (continuar && !vitoria);  // Continua o jogo enquanto houver casas vazias e não houver vencedor
+
+    if (vitoria == 1) {
+        cout << "Jogador 1 ganhou!" << endl;  // Jogador 1 venceu
+        return 1;
+    } else if (vitoria == -1) {
+        cout << "Jogador 2 ganhou!" << endl;  // Jogador 2 venceu
+        return 2;
+    } else {
+        cout << "Empate!" << endl;  // Empate
+        return 0;
+    }
+}

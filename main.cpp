@@ -197,3 +197,94 @@ int jogarPartida(int** tabuleiro, bool doisJogadores) {
         return 0;
     }
 }
+// Função para salvar os dados do jogo em um arquivo
+void salvarDadosDoJogo(int placarJogador1, int placarJogador2) {
+    ofstream arquivo("dados_do_jogo.txt", ios::app);  // Abre o arquivo para adicionar dados
+    if (arquivo.is_open()) {
+        arquivo << "Jogador 1: " << placarJogador1 << " | Jogador 2: " << placarJogador2 << endl;  // Salva o placar no arquivo
+        arquivo.close();  // Fecha o arquivo
+    } else {
+        cout << "Erro ao salvar os dados do jogo!" << endl;
+    }
+}
+
+// Função para carregar os dados do jogo do arquivo
+void carregarDadosDoJogo() {
+    ifstream arquivo("dados_do_jogo.txt");  // Abre o arquivo para leitura
+    if (arquivo.is_open()) {
+        string linha;
+        cout << "Dados de jogos anteriores:" << endl;
+        while (getline(arquivo, linha)) {
+            cout << linha << endl;  // Exibe cada linha do arquivo (dados dos jogos anteriores)
+        }
+        arquivo.close();  // Fecha o arquivo
+    } else {
+        cout << "Erro ao ler os dados do arquivo!" << endl;
+    }
+}
+
+// Função para mostrar o placar atual após cada partida
+void placarAtual(int resultado, int& jogador1, int& jogador2) {
+    if (resultado == 1)
+        jogador1++;  // Incrementa o placar do Jogador 1
+    if (resultado == 2)
+        jogador2++;  // Incrementa o placar do Jogador 2
+
+    cout << "Placar: " << endl;
+    cout << jogador1 << " x " << jogador2 << endl;  // Exibe o placar atual
+}
+
+// Função para exibir o menu principal do jogo
+void exibirMenu() {
+    cout << "\nMenu:" << endl;
+    cout << "1. Jogar" << endl;  // Opção para jogar uma nova partida
+    cout << "2. Ver Ranking" << endl;  // Opção para ver o ranking dos jogos anteriores
+    cout << "3. Créditos" << endl;  // Opção para ver os créditos
+    cout << "0. Sair" << endl;  // Opção para sair do jogo
+    cout << "Escolha uma opção: ";
+}
+
+int main() {
+    int** tabuleiro = criarTabuleiro();  // Cria o tabuleiro dinamicamente
+    int opcao = 0, jogador1 = 0, jogador2 = 0, resultado;
+    bool doisJogadores;
+
+    do {
+        exibirMenu();  // Exibe o menu principal
+        cin >> opcao;
+
+        switch (opcao) {
+        case 1:
+            cout << "Escolha o modo de jogo:" << endl;
+            cout << "1. Dois jogadores" << endl;
+            cout << "2. Jogador vs Computador" << endl;
+            cout << "Escolha uma opção: ";
+            int modo;
+            cin >> modo;
+            doisJogadores = (modo == 1);  // Define o modo de jogo
+            resultado = jogarPartida(tabuleiro, doisJogadores);  // Inicia a partida
+            placarAtual(resultado, jogador1, jogador2);  // Exibe o placar após a partida
+            salvarDadosDoJogo(jogador1, jogador2);  // Salva o placar no arquivo
+            break;
+
+        case 2:
+            carregarDadosDoJogo();  // Exibe os dados de jogos anteriores
+            break;
+
+case 3:  // Creditos
+                cout << "Desenvolvido por [Lavínia, Leandra, MariaClara e MariaEduarda]" << endl;
+                break;
+
+        case 0:
+            cout << "Saindo... Até logo!" << endl;  // Mensagem de despedida
+            break;
+
+        default:
+            cout << "Opção inválida!" << endl;  // Caso o usuário escolha uma opção inválida
+            break;
+        }
+    } while (opcao != 0);  // O programa continua executando até que o usuário escolha sair
+
+    liberarTabuleiro(tabuleiro);  // Libera a memória alocada para o tabuleiro ao final
+    return 0;
+}

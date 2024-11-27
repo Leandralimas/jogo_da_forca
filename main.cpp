@@ -60,3 +60,90 @@ char imprimirBloco(int bloco) {
     else                     // Se o bloco for -1, é o 'O' do Jogador 2
         return 'O';
 }
+
+// Função para exibir o tabuleiro de forma formatada
+void exibir(int** tabuleiro) {
+    cout << endl;
+    for (int linha = 0; linha < 3; linha++) {
+        for (int coluna = 0; coluna < 3; coluna++) {
+            cout << " " << imprimirBloco(tabuleiro[linha][coluna]) << " ";  // Exibe o conteúdo da casa
+            if (coluna < 2) cout << "|";  // Adiciona o separador de colunas, se não for a última coluna
+        }
+        cout << endl;
+        if (linha < 2) cout << "---+---+---" << endl;  // Adiciona linha separadora entre as linhas do tabuleiro
+    }
+    cout << endl;
+}
+
+// Função para realizar uma jogada (para jogador ou computador)
+void jogarJogada(int** tabuleiro, int jogador, bool computador = false) {
+    int linha, coluna, verificar;
+
+    if (computador) {  // Se for a vez do computador
+        // O computador faz uma jogada aleatória em uma casa vazia
+        do {
+            linha = rand() % 3;          // Gera uma linha aleatória entre 0 e 2
+            coluna = rand() % 3;         // Gera uma coluna aleatória entre 0 e 2
+            verificar = tabuleiro[linha][coluna];  // Verifica se a casa está vazia
+        } while (verificar != 0);  // Repete até encontrar uma casa vazia
+
+        cout << "Computador jogando na linha " << linha + 1 << ", coluna " << coluna + 1 << endl;
+    } else {  // Se for a vez de um jogador humano
+        // Solicita ao jogador a linha e coluna para a jogada
+        do {
+            cout << "Linha: ";
+            cin >> linha;
+            cout << "Coluna: ";
+            cin >> coluna;
+            linha--; coluna--;  // Ajuste para índice de 0 a 2 (tabuleiro é indexado de 0 a 2)
+
+            // Verifica se a casa está vazia e se está dentro dos limites válidos
+            verificar = tabuleiro[linha][coluna] || linha < 0 || linha > 2 || coluna < 0 || coluna > 2;
+            if (verificar)
+                cout << "Essa casa não está vazia ou fora do intervalo 3x3" << endl;
+        } while (verificar);  // Repete até uma jogada válida ser feita
+    }
+
+    // Marca a posição escolhida no tabuleiro
+    if (jogador == 0)
+        tabuleiro[linha][coluna] = 1;  // Jogador 1 (X)
+    else
+        tabuleiro[linha][coluna] = -1; // Jogador 2 (O)
+}
+
+// Função para verificar se ainda há casas vazias no tabuleiro
+int verificarContinuar(int** tabuleiro) {
+    for (int i = 0; i < 3; i++)  // Percorre todas as linhas
+        for (int j = 0; j < 3; j++)  // Percorre todas as colunas
+            if (tabuleiro[i][j] == 0)  // Se encontrar uma casa vazia
+                return 1;  // Retorna 1, indicando que ainda há casas vazias
+    return 0;  // Retorna 0, indicando que não há mais casas vazias
+}
+
+// Função para verificar se algum jogador venceu
+int verificarVitoria(int** tabuleiro) {
+    int linha, coluna, soma;
+
+    // Verificar as linhas para vitória
+    for (linha = 0; linha < 3; linha++) {
+        soma = 0;
+        for (coluna = 0; coluna < 3; coluna++)
+            soma += tabuleiro[linha][coluna];
+
+        if (soma == 3)
+            return 1;  // Jogador 1 venceu
+        if (soma == -3)
+            return -1; // Jogador 2 venceu
+    }
+
+    // Verificar as colunas para vitória
+    for (coluna = 0; coluna < 3; coluna++) {
+        soma = 0;
+        for (linha = 0; linha < 3; linha++)
+            soma += tabuleiro[linha][coluna];
+
+        if (soma == 3)
+            return 1;  // Jogador 1 venceu
+        if (soma == -3)
+            return -1; // Jogador 2 venceu
+    }
